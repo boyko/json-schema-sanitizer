@@ -1,60 +1,57 @@
-import {
-  compose,
-  partialRight
-} from 'ramda';
+import { compose, partialRight } from 'ramda';
 
-const simpleTypes: ReadonlyArray<string> = [
-  'string',
-  'number',
-  'integer'
-];
+const simpleTypes: ReadonlyArray<string> = ['string', 'number', 'integer'];
 
-interface RuleHandler {
-  (data: any, opts: any): any
-}
+type RuleHandler = (data: any, opts: any) => any;
+
+type CompiledRule = (data: any) => any;
 
 interface Rules {
-  [name: string]: RuleHandler
+  [name: string]: RuleHandler;
 }
 
 interface Schema {
-  readonly type?: string
-  readonly allOf?: ReadonlyArray<object>
-  readonly anyOf?: ReadonlyArray<object>
-  readonly oneOf?: ReadonlyArray<object>
-  readonly items?: object
-  readonly default?: any
-  readonly properties?: object
-  readonly required?: ReadonlyArray<string>
-  readonly rules?: ReadonlyArray<any>
+  readonly type?: string;
+  readonly allOf?: ReadonlyArray<object>;
+  readonly anyOf?: ReadonlyArray<object>;
+  readonly oneOf?: ReadonlyArray<object>;
+  readonly items?: object;
+  readonly default?: any;
+  readonly properties?: object;
+  readonly required?: ReadonlyArray<string>;
+  readonly rules?: ReadonlyArray<any>;
 }
 
 interface JssOpts {
-  readonly rules: Rules
+  readonly rules?: Rules;
 }
 
 export default class Jss {
-  private readonly rules: Rules;
+  public rules: Rules;
 
-  constructor(opts: JssOpts) {
-    this.rules = { ...opts.rules || {} };
+  public constructor(opts?: JssOpts) {
+    this.rules = { ...(opts && opts.rules ? opts.rules : {}) };
   }
 
-  addRule(name: string, handler: RuleHandler) {
+  public addRule(name: string, handler: RuleHandler): void {
     if (typeof this.rules[name] !== 'undefined') {
       throw new Error('A rule with the same name already exists');
     }
     this.rules[name] = handler;
-  };
+  }
 
-  compileRule(rulesConfig: ReadonlyArray<string>) {
+  public compileRule(rulesConfig: ReadonlyArray<string>): CompiledRule {
     if (!Array.isArray(rulesConfig)) {
-      throw new Error('Improperly configured. Rules should be an array of values');
+      throw new Error(
+        'Improperly configured. Rules should be an array of values'
+      );
     }
     const handlers = rulesConfig.map(config => {
       if (Array.isArray(config)) {
         if (config.length !== 2) {
-          throw new Error('Improperly configured. If a rule is specified as an array it should have length 2.');
+          throw new Error(
+            'Improperly configured. If a rule is specified as an array it should have length 2.'
+          );
         }
         const ruleHandler = this.rules[config[0]];
         if (typeof ruleHandler === 'undefined') {
@@ -70,16 +67,16 @@ export default class Jss {
 
     const combinedHandler = compose.apply(null, handlers.reverse());
     return combinedHandler;
-  };
+  }
 
-  applyRule(rulesConfig: ReadonlyArray<string>, data: any) {
+  public applyRule(rulesConfig: ReadonlyArray<string>, data: any): any {
     const handler = this.compileRule(rulesConfig);
     return handler(data);
-  };
+  }
 
-  clean(schema: Schema, data: any, required?: boolean) {
+  public clean(schema: Schema, data: any, required?: boolean): any {
     if (simpleTypes.indexOf(schema.type) > -1) {
-      const hasData = (typeof data !== 'undefined');
+      const hasData = typeof data !== 'undefined';
       if (!required && !hasData && schema.default) {
         return schema.default;
       }
@@ -121,12 +118,10 @@ export default class Jss {
       return data;
     } else if (schema.oneOf) {
       return data;
-    }
-
-    if (schema.type === 'array') {
+    } else if (schema.type === 'array') {
       return data.map(value => this.clean(schema.items, value));
+    } else {
+      throw new Error('Unsupported schema');
     }
-
-    throw new Error('Unsupported schema');
-  };
+  }
 }

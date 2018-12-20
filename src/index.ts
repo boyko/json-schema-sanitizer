@@ -1,1 +1,1 @@
-export * from './lib/jss';
+export { default } from './lib/jss';
