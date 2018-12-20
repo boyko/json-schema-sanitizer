@@ -36,8 +36,8 @@ it('should return the data without changes if no rules are specified', t => {
     'type': 'object',
     'properties': {
       'id': {
-        'type': 'string',
-        'default': 'defaultId'
+        'default': 'defaultId',
+        'type': 'string'
       },
       'name': {
         'type': 'string'
