@@ -4,6 +4,25 @@ import sinon from 'sinon';
 import Jss from './jss';
 
 describe('spected-schema', () => {
+  describe('exceptions', () => {
+    it('should throw on invalid data', () => {
+      const data = {};
+      const schema = {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string'
+          }
+        },
+        required: [
+          'name'
+        ]
+      };
+
+      const jss = new Jss();
+      expect(() => jss.clean(schema, data)).to.throw('Invalid data.');
+    });
+  })
   describe('Jss', () => {
     it('should have empty rules if called with no arguments', () => {
       const jss = new Jss();
@@ -183,23 +202,6 @@ describe('spected-schema', () => {
   });
   // it.skip('should throw on unsupported schemas', () => {
   // });
-  it('should throw on invalid data', () => {
-    const data = {};
-    const schema = {
-      type: 'object',
-      properties: {
-        name: {
-          type: 'string'
-        }
-      },
-      required: [
-        'name'
-      ]
-    };
-
-    const jss = new Jss();
-    expect(() => jss.clean(schema, data)).to.throw('Invalid data.');
-  });
   describe('should apply single config (TODO fix) rules', () => {
     it('should apply rules on a leaf node', () => {
       const data = {
