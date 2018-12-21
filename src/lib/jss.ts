@@ -129,7 +129,7 @@ export default class Jss {
       // @ts-ignore
       return data.map(value => this.clean(schema.items, value));
     } else {
-      throw new Error('Unsupported schema');
+      throw new Error('Unsupported schema.');
     }
   }
 }

@@ -3,7 +3,7 @@ import 'mocha';
 import sinon from 'sinon';
 import Jss from './jss';
 
-describe('spected-schema', () => {
+describe('json-schema-sanitizer', () => {
   describe('exceptions', () => {
     it('should throw on invalid data', () => {
       const data = {};
@@ -32,6 +32,25 @@ describe('spected-schema', () => {
       };
       const jss = new Jss();
       expect(() => jss.clean(schema, data)).to.throw('Cannot find rule tr.');
+    });
+    it('should throw if a rule throws an error', () => {
+      const schema = {
+        type: 'string',
+        rules: [
+          'fail'
+        ]
+      };
+      const jss = new Jss();
+      const fakeRule = sinon.stub().throws('Error running rule');
+      jss.addRule('fail', fakeRule);
+      expect(() => jss.clean(schema, 'testValue')).to.throw();
+    });
+    it('should throw if the schemas type is not supported', () => {
+      const schema = {
+        type: 'specialSchema'
+      };
+      const jss = new Jss();
+      expect(() => jss.clean(schema, 'testString')).to.throw('Unsupported schema.');
     });
   });
   describe('Jss', () => {
@@ -211,8 +230,6 @@ describe('spected-schema', () => {
       expect(result).to.deep.equal(data);
     });
   });
-  // it.skip('should throw on unsupported schemas', () => {
-  // });
   describe('should apply single config (TODO fix) rules', () => {
     it('should apply rules on a leaf node', () => {
       const data = {
@@ -286,8 +303,6 @@ describe('spected-schema', () => {
         name: 'cutValue'
       });
     });
-    // it.skip('should not apply rules to default values', () => {
-    // });
     it('should not apply rules to missing properties that are not required', () => {
       const data = {};
 
