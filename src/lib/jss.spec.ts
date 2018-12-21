@@ -3,52 +3,52 @@ import test from 'ava';
 import sinon from 'sinon';
 import Jss from './jss';
 
-test('should have empty rules if called wtesth no arguments', t => {
-  const jss = new Jss();
-  t.deepEqual({ ...jss }, { rules: {} });
-  // t(jss.rules).deepEqual({});
-});
+// test('should have empty rules if called wtesth no arguments', t => {
+//   const jss = new Jss();
+//   t.deepEqual({ ...jss }, { rules: {} });
+//   // t(jss.rules).deepEqual({});
+// });
 
-test('should load rules wtesth the addRule method', t => {
-  const jss = new Jss();
-  const handler = sinon.spy();
-  jss.addRule('name', handler);
-  t.deepEqual(jss.rules, { name: handler });
-});
+// test('should load rules wtesth the addRule method', t => {
+//   const jss = new Jss();
+//   const handler = sinon.spy();
+//   jss.addRule('name', handler);
+//   t.deepEqual(jss.rules, { name: handler });
+// });
 
-test('should load rules by using the rules option', t => {
-  const handler = sinon.spy();
-  const rules = {
-    name: handler
-  };
-  const jss = new Jss({ rules });
-  t.deepEqual(jss.rules, { name: handler });
-});
+// test('should load rules by using the rules option', t => {
+//   const handler = sinon.spy();
+//   const rules = {
+//     name: handler
+//   };
+//   const jss = new Jss({ rules });
+//   t.deepEqual(jss.rules, { name: handler });
+// });
 
-test('should return the data without changes if no rules are specified', t => {
-  const data = {
-    id: 'testId',
-    name: 'testName'
-  };
-  const schema = {
-    'type': 'object',
-    'properties': {
-      'id': {
-        'default': 'defaultId',
-        'type': 'string'
-      },
-      'name': {
-        'type': 'string'
-      }
-    },
-    'required': [
-      'name'
-    ]
-  };
-  const jss = new Jss();
-  const result = jss.clean(schema, data);
-  t.deepEqual(result, data);
-});
+// test('should return the data without changes if no rules are specified', t => {
+//   const data = {
+//     id: 'testId',
+//     name: 'testName'
+//   };
+//   const schema = {
+//     'type': 'object',
+//     'properties': {
+//       'id': {
+//         'default': 'defaultId',
+//         'type': 'string'
+//       },
+//       'name': {
+//         'type': 'string'
+//       }
+//     },
+//     'required': [
+//       'name'
+//     ]
+//   };
+//   const jss = new Jss();
+//   const result = jss.clean(schema, data);
+//   t.deepEqual(result, data);
+// });
 
 test('should insert the default property if the value is missing', t => {
   const data = {
@@ -184,8 +184,6 @@ test('should handle complex array elements', t => {
 
 // it.skip('should throw on unsupported schemas', () => {
 // });
-// it.skip('should throw on invalid data', () => {
-// });
 
 test('should apply rules defined on a leaf node', t => {
   const data = {
@@ -287,9 +285,7 @@ test('should not apply rules to missing properties that are not required', t => 
   sinon.assert.notCalled(trimHandler);
   t.deepEqual(result, {});
 });
-// it.skip('should throw if a rule is not defined', () => {
-//
-// });
+
 
 test('should pass arguments to the handler if present', t => {
   const data = {
@@ -328,3 +324,37 @@ test('should pass arguments to the handler if present', t => {
     name: 'cutName'
   });
 });
+
+test('should throw if required property is missing', t => {
+  const data = {};
+  const schema = {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'string'
+      }
+    },
+    required: [
+      'name'
+    ]
+  };
+
+  const jss = new Jss();
+  t.throws(() => jss.clean(schema, data));
+});
+
+test('should throw if a rule is not found', t => {
+  const data = "";
+  const schema = {
+    type: 'string',
+    rules: [
+      'tr'
+    ]
+  };
+  const jss = new Jss();
+  t.throws(() => jss.clean(schema, data));
+});
+
+// it.skip('should throw if a rule is not defined', () => {
+//
+// });
