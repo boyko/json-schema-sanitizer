@@ -33,6 +33,28 @@ describe('json-schema-sanitizer', () => {
       const jss = new Jss();
       expect(() => jss.clean(schema, data)).to.throw('Cannot find rule tr.');
     });
+    it('should throw if a rules is not found when the rule definition specifies arguments', () => {
+      const data = '';
+      const schema = {
+        type: 'string',
+        rules: [
+          ['tr', 1]
+        ]
+      };
+      const jss = new Jss();
+      expect(() => jss.clean(schema, data)).to.throw('Cannot find rule tr.');
+    });
+    it('should throw if a rule is defined by an array of length different from 2', () => {
+      const data = '';
+      const schema = {
+        type: 'string',
+        rules: [
+          ['tr', 1, 2, 3]
+        ]
+      };
+      const jss = new Jss();
+      expect(() => jss.clean(schema, data)).to.throw('Invalid rule definition. Rule array it should have length 2.');
+    });
     it('should throw if a rule throws an error', () => {
       const schema = {
         type: 'string',
@@ -60,6 +82,11 @@ describe('json-schema-sanitizer', () => {
       const jss = new Jss();
       // @ts-ignore
       expect(() => jss.clean(schema, 'testString')).to.throw();
+    });
+    it('should not allow adding a rule if the name already exists', () => {
+      const jss = new Jss();
+      jss.addRule('trim', () => null);
+      expect(() => jss.addRule('trim', () => null)).to.throw();
     });
   });
   describe('Jss', () => {
@@ -172,6 +199,46 @@ describe('json-schema-sanitizer', () => {
         ]
       };
       const jss = new Jss();
+      const result = jss.clean(schema, data);
+      expect(result).to.deep.equal(data);
+    });
+  });
+  describe('anyOf and oneOf', () => {
+    it('should returns parts of the data described by oneOf unchanged', () => {
+      const data = {
+        name: 'testName'
+      };
+      const schema = {
+        oneOf: [
+          {
+            type: 'string'
+          },
+          {
+            type: 'number'
+          }
+        ]
+      };
+      const jss = new Jss();
+      // @ts-ignore
+      const result = jss.clean(schema, data);
+      expect(result).to.deep.equal(data);
+    });
+    it('should returns parts of the data described by anyOf unchanged', () => {
+      const data = {
+        name: 'testName'
+      };
+      const schema = {
+        anyOf: [
+          {
+            type: 'string'
+          },
+          {
+            type: 'number'
+          }
+        ]
+      };
+      const jss = new Jss();
+      // @ts-ignore
       const result = jss.clean(schema, data);
       expect(result).to.deep.equal(data);
     });

@@ -43,14 +43,14 @@ export default class Jss {
   public compileRule(rulesConfig: ReadonlyArray<string>): CompiledRule {
     if (!Array.isArray(rulesConfig)) {
       throw new Error(
-        'Improperly configured. Rules should be an array of values'
+        'Invalid rule definition.'
       );
     }
     const handlers = rulesConfig.map(config => {
       if (Array.isArray(config)) {
         if (config.length !== 2) {
           throw new Error(
-            'Improperly configured. If a rule is specified as an array it should have length 2.'
+            'Invalid rule definition. Rule array it should have length 2.'
           );
         }
         const ruleHandler = this.rules[config[0]];
