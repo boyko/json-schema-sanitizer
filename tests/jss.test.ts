@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import 'mocha';
 import sinon from 'sinon';
-import Jss from './jss';
+import Jss from '../src/lib/jss';
 
 describe('json-schema-sanitizer', () => {
   describe('exceptions', () => {
@@ -51,6 +51,15 @@ describe('json-schema-sanitizer', () => {
       };
       const jss = new Jss();
       expect(() => jss.clean(schema, 'testString')).to.throw('Unsupported schema.');
+    });
+    it('should throw if a rule is not an array', () => {
+      const schema = {
+        type: 'string',
+        rules: 'Misspecified rule'
+      };
+      const jss = new Jss();
+      // @ts-ignore
+      expect(() => jss.clean(schema, 'testString')).to.throw();
     });
   });
   describe('Jss', () => {
