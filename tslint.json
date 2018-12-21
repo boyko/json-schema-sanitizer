@@ -19,6 +19,7 @@
     // Recommended built-in rules
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
+    "object-literal-sort-keys": false,
     "typedef": [
       true,
       "call-signature"
@@ -28,7 +29,6 @@
     "readonly-array": true,
     "no-let": false,
     "no-object-mutation": false,
-    "object-literal-sort-keys": false,
     "no-delete": true,
     "no-method-signature": true,
     // Functional style rules
@@ -40,8 +40,7 @@
       {
         "ignore-prefix": [
           "console.",
-          "process.exit",
-          "Object.keys"
+          "process.exit"
         ]
       }
     ],
