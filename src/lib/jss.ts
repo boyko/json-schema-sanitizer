@@ -50,15 +50,14 @@ export default class Jss {
       if (Array.isArray(config)) {
         if (config.length !== 2) {
           throw new Error(
-            'Invalid rule definition. Rule array it should have length 2.'
+            'Invalid rule definition. Rule array should have length 2.'
           );
         }
         const ruleHandler = this.rules[config[0]];
         if (typeof ruleHandler === 'undefined') {
           throw new Error(`Cannot find rule ${config[0]}.`);
         }
-        const configuredHandler = partialRight(ruleHandler, [config[1]]);
-        return configuredHandler;
+        return partialRight(ruleHandler, [config[1]]);
       } else {
         const ruleHandler = this.rules[config];
         if (typeof ruleHandler === 'undefined') {
