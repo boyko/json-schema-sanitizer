@@ -55,14 +55,14 @@ export default class Jss {
         }
         const ruleHandler = this.rules[config[0]];
         if (typeof ruleHandler === 'undefined') {
-          throw new Error(`Cannot find rule ${config[0]}`);
+          throw new Error(`Cannot find rule ${config[0]}.`);
         }
         const configuredHandler = partialRight(ruleHandler, [config[1]]);
         return configuredHandler;
       } else {
         const ruleHandler = this.rules[config];
         if (typeof ruleHandler === 'undefined') {
-          throw new Error(`Cannot find rule ${config[0]}.`);
+          throw new Error(`Cannot find rule ${config}.`);
         }
         return ruleHandler;
       }

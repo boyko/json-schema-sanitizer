@@ -22,7 +22,18 @@ describe('spected-schema', () => {
       const jss = new Jss();
       expect(() => jss.clean(schema, data)).to.throw('Invalid data.');
     });
-  })
+    it('should throw if a rule is not found', () => {
+      const data = '';
+      const schema = {
+        type: 'string',
+        rules: [
+          'tr'
+        ]
+      };
+      const jss = new Jss();
+      expect(() => jss.clean(schema, data)).to.throw('Cannot find rule tr.');
+    });
+  });
   describe('Jss', () => {
     it('should have empty rules if called with no arguments', () => {
       const jss = new Jss();
@@ -300,8 +311,6 @@ describe('spected-schema', () => {
       expect(result).to.deep.equal({});
 
       sinon.assert.notCalled(trimHandler);
-    });
-    it.skip('should throw if a rule is not defined', () => {
     });
     it('should pass arguments to the handler if present', () => {
       const data = {
