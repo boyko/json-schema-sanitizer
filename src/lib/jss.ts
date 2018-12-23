@@ -84,7 +84,7 @@ export default class Jss {
         return schema.default;
       }
       if (required && !hasData) {
-        throw new Error('Invalid data.');
+        throw new Error(`Invalid data`);
       }
       if (schema.rules && hasData) {
         return this.applyRule(schema.rules, data);
@@ -125,6 +125,14 @@ export default class Jss {
     } else if (schema.oneOf) {
       return data;
     } else if (schema.type === 'array') {
+      // FIXME: fails on optional arrays
+      // @ts-ignore
+      if (isRequred && typeof data === 'undefined') {
+        // FIXME: refactor error message
+        throw new Error('Invalid data.');
+      } else if (typeof data === 'undefined') {
+        return;
+      }
       // @ts-ignore
       return data.map(value => this.clean(schema.items, value));
     } else {
