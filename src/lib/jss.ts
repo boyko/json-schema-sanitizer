@@ -18,6 +18,7 @@ interface Schema {
   readonly items?: object;
   readonly default?: any;
   readonly properties?: object;
+  readonly patternProperties?: object;
   readonly required?: ReadonlyArray<string>;
   readonly rules?: ReadonlyArray<any>;
 }
@@ -99,6 +100,7 @@ export default class Jss {
       const cleaned = {};
       const requiredProps = schema.required || [];
 
+      // @ts-ignore
       Object.keys(schema.properties).forEach(propKey => {
         // @ts-ignore
         const propsSchema = schema.properties[propKey];
@@ -111,6 +113,9 @@ export default class Jss {
         }
       });
       return cleaned;
+    } else if (schema.patternProperties) {
+      // FIXME: supprt for pattern properties?
+      return data;
     } else if (schema.allOf) {
       // Collect all properties
       let cleanedParts = {};
