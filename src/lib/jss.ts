@@ -1,6 +1,6 @@
 import { compose, partialRight } from 'ramda';
 
-const simpleTypes: ReadonlyArray<string> = ['string', 'number', 'integer'];
+const simpleTypes: ReadonlyArray<string> = ['string', 'number', 'integer', 'boolean'];
 
 type RuleHandler = (data: any, opts: any) => any;
 
@@ -114,7 +114,7 @@ export default class Jss {
       });
       return cleaned;
     } else if (schema.patternProperties) {
-      // FIXME: supprt for pattern properties?
+      // FIXME: support pattern properties?
       return data;
     } else if (schema.allOf) {
       // Collect all properties
