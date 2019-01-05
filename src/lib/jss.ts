@@ -100,12 +100,22 @@ export default class Jss {
       const cleaned = {};
       const requiredProps = schema.required || [];
 
+      if (!data) {
+        return;
+      }
+
+      if (!data && required) {
+        throw new Error('Invalid data');
+      }
+
       // @ts-ignore
       Object.keys(schema.properties).forEach(propKey => {
         // @ts-ignore
         const propsSchema = schema.properties[propKey];
-        const nextData = data[propKey];
         const isRequired = requiredProps.indexOf(propKey) > -1;
+
+
+        const nextData = data[propKey];
         const cleanedPart = this.clean(propsSchema, nextData, isRequired);
         if (typeof cleanedPart !== 'undefined') {
           // @ts-ignore
@@ -132,7 +142,7 @@ export default class Jss {
     } else if (schema.type === 'array') {
       // FIXME: fails on optional arrays
       // @ts-ignore
-      if (isRequred && typeof data === 'undefined') {
+      if (required && typeof data === 'undefined') {
         // FIXME: refactor error message
         throw new Error('Invalid data.');
       } else if (typeof data === 'undefined') {

@@ -6,7 +6,6 @@ import Jss from '../src/lib/jss';
 describe('json-schema-sanitizer', () => {
   describe('exceptions', () => {
     it('should throw on invalid data', () => {
-      const data = {};
       const schema = {
         type: 'object',
         properties: {
@@ -20,7 +19,7 @@ describe('json-schema-sanitizer', () => {
       };
 
       const jss = new Jss();
-      expect(() => jss.clean(schema, data)).to.throw('Invalid data.');
+      expect(() => jss.clean(schema, {})).to.throw('Invalid data');
     });
     it('should throw if a rule is not found', () => {
       const data = '';
@@ -53,7 +52,7 @@ describe('json-schema-sanitizer', () => {
         ]
       };
       const jss = new Jss();
-      expect(() => jss.clean(schema, data)).to.throw('Invalid rule definition. Rule array it should have length 2.');
+      expect(() => jss.clean(schema, data)).to.throw('Invalid rule definition. Rule array should have length 2.');
     });
     it('should throw if a rule throws an error', () => {
       const schema = {
@@ -167,6 +166,27 @@ describe('json-schema-sanitizer', () => {
           name: 'testName'
         });
     });
+  });
+  it('should skip properties that are not required and are undefined', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        a: {
+          type: 'object',
+          properties: {
+            prop1: {
+              type: 'string',
+              default: ''
+            }
+          }
+        }
+      }
+    };
+
+    const jss = new Jss();
+    const result = jss.clean(schema, {});
+
+    expect(result).to.deep.equal({});
   });
   describe('allOf schema', () => {
     it('should return the data unchanged if no rules are specified', () => {
