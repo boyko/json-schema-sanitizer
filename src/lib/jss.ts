@@ -10,7 +10,7 @@ interface Rules {
   [name: string]: RuleHandler;
 }
 
-interface Schema {
+export interface Schema {
   readonly type: string;
   readonly allOf?: ReadonlyArray<object>;
   readonly anyOf?: ReadonlyArray<object>;
@@ -21,6 +21,8 @@ interface Schema {
   readonly patternProperties?: object;
   readonly required?: ReadonlyArray<string>;
   readonly rules?: ReadonlyArray<any>;
+
+  readonly [k: string]: any
 }
 
 interface JssOpts {
@@ -69,8 +71,7 @@ export default class Jss {
     });
 
     // @ts-ignore
-    const combinedHandler = compose.apply(null, handlers.reverse());
-    return combinedHandler;
+    return compose.apply(null, handlers.reverse());
   }
 
   public applyRule(rulesConfig: ReadonlyArray<string>, data: any): any {
@@ -113,7 +114,6 @@ export default class Jss {
         // @ts-ignore
         const propsSchema = schema.properties[propKey];
         const isRequired = requiredProps.indexOf(propKey) > -1;
-
 
         const nextData = data[propKey];
         const cleanedPart = this.clean(propsSchema, nextData, isRequired);
